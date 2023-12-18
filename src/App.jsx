@@ -1,5 +1,23 @@
+import { useState } from "react";
 import pizza from "./assets/pizza.jpg";
+import { useEffect } from "react";
+import Comment from "./Comments/comment";
 function App() {
+  const [comments, setComments] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const fetchData = async () => {
+    setLoading(true);
+    const response = await fetch(
+      "https://react-mini-projects-api.classbon.com/Comments/1"
+    );
+    const data = await response.json();
+
+    setComments(data);
+    setLoading(false);
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
   return (
     <div className="container pt-5">
       <div className="row">
@@ -9,17 +27,13 @@ function App() {
         <div className="col-md-6 pt-4">
           <div className="product-details pb-3">
             <div className="mb-3">
-              <span className="h3 fw-normal text-accent">
-                قیمت: 158,000
-              </span>
+              <span className="h3 fw-normal text-accent">قیمت: 158,000</span>
             </div>
             <form className="mb-grid-gutter">
               <div className="row mx-n2">
                 <div className="col-6 px-2">
                   <div className="mb-3">
-                    <label className="form-label">
-                      اندازه:
-                    </label>
+                    <label className="form-label">اندازه:</label>
                     <select className="form-select">
                       <option value="small">کوچک</option>
                       <option value="medium">متوسط</option>
@@ -29,9 +43,7 @@ function App() {
                 </div>
                 <div className="col-6">
                   <div className="mb-3">
-                    <label className="form-label">
-                      تعداد:
-                    </label>
+                    <label className="form-label">تعداد:</label>
                     <select className="form-select">
                       <option value="1">1</option>
                       <option value="2">2</option>
@@ -42,14 +54,13 @@ function App() {
                   </div>
                 </div>
               </div>
-             
-                <button
-                  className="btn btn-info btn-shadow d-block w-100"
-                  type="submit"
-                >
-                  افزودن به سبد خرید
-                </button>
-            
+
+              <button
+                className="btn btn-info btn-shadow d-block w-100"
+                type="submit"
+              >
+                افزودن به سبد خرید
+              </button>
             </form>
             <h5 className="h6 mb-3 pb-3 border-bottom">
               پیتزا استیک (یک نفره)
@@ -64,7 +75,16 @@ function App() {
       </div>
       <hr />
       <div className="row">
-        <div className="col-12">
+        <div className="col-12 pt-5">
+          {loading ? (
+            <div className="d-flex justify-content-center">
+              <div className="spinner-border"></div>
+            </div>
+          ) : (
+            comments.map((comment) => (
+              <Comment key={comment.id} {...comment} />
+            ))
+          )}
         </div>
       </div>
     </div>
